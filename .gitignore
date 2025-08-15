@@ -1,0 +1,26 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environnements virtuels
+venv/
+env/
+ENV/
+.venv/
+
+# Base de données SQLite locale
+taches.db
+
+# Dossier Flask instance
+instance/
+
+# Fichiers de log
+*.log
+
+# Fichiers temporaires ou éditeur
+*.swp
+*.swo
+*.idea/
+.vscode/

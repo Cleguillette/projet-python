@@ -1,0 +1,74 @@
+Plan détaillé : Passage à SQLAlchemy + Tests + Déploiement
+1. Intégrer SQLAlchemy dans ton projet Flask
+Objectif : remplacer la gestion JSON par une vraie base SQLite via SQLAlchemy, manipuler tes tâches via des objets Python.
+
+Étapes :
+
+Installer Flask-SQLAlchemy (tu l’as déjà fait)
+
+Configurer la base dans main.py (URI SQLite locale)
+
+Créer un modèle Task avec colonnes (id, description, statut, priorité)
+
+Adapter les routes pour lire/écrire les tâches en base
+
+Supprimer la gestion JSON
+
+Points clés à comprendre :
+
+ORM (Object Relational Mapping) : chaque ligne de ta table devient un objet Python
+
+Session : objet pour gérer transactions en base (ajout, commit, suppression)
+
+Migration (optionnelle pour commencer, mais utile pour évoluer la base)
+
+2. Ajouter des tests unitaires (avec pytest)
+Objectif : assurer la qualité de ton code backend Flask.
+
+Étapes :
+
+Installer pytest et pytest-flask
+
+Écrire des tests simples pour tester tes routes Flask (ex : ajouter une tâche, supprimer)
+
+Tester que la base contient bien les données après modifications
+
+Tester le comportement sur données invalides (ex : tâche vide)
+
+Points clés à comprendre :
+
+Tests automatisés = garantir que ton code fonctionne toujours après modification
+
+Fixtures pour configurer un client de test Flask
+
+Assertion sur réponses HTTP, contenu retourné, base de données
+
+3. Préparer le déploiement
+Objectif : rendre ton app accessible en ligne.
+
+Étapes :
+
+Nettoyer ton environnement (requirements.txt ou environment.yml)
+
+Ajouter un fichier Procfile (pour Heroku, par ex)
+
+Configurer Flask pour fonctionner en production (pas de debug, gérer port via variable d’environnement)
+
+Choisir un service de déploiement simple (Heroku, Render, Railway)
+
+Pousser ton code sur GitHub, connecter ton repo au service
+
+Déployer et tester l’app en ligne
+
+Points clés à comprendre :
+
+Différences entre environnement développement et production
+
+Variables d’environnement (pour config, secret keys)
+
+Logs en production
+
+
+
+Tout mettre sur GitHub
+Documentation propre
