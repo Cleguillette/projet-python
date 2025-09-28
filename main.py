@@ -1,105 +1,81 @@
-#import json
+# Library imports
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 
-# def charger_taches():
-#     with open("taches.json", "r", encoding="utf-8") as f:
-#         data = json.load(f)
-#     return(data)
-
-# def sauvegarder_taches(taches):
-#     with open("taches.json", "w", encoding="utf-8") as f:
-#         json.dump(taches, f, ensure_ascii=False, indent=2)
-
-# taches = charger_taches()
-
-
+# Create Flask application
 app = Flask(__name__)
 
+# Configurations
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///taches.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+# Initialize the SQLAlchemy object to manage the database
 db = SQLAlchemy(app)
 
+# Define the Task model (represents a task in the database)
 class Task(db.Model):
     __tablename__ = "tasks"
 
     id = db.Column(db.Integer, primary_key=True)
-    nom = db.Column(db.String(100), nullable=False)
-    statut = db.Column(db.String(20), nullable=False, default="todo")
+    name = db.Column(db.String(100), nullable=False)
+    status = db.Column(db.String(20), nullable=False, default="todo")
 
     def __repr__(self):
-        return f"<Task {self.nom} ({self.statut})>"
+        return f"<Task {self.name} ({self.status})>"
     
 @app.route("/", methods=["GET", "POST"])
 def index():
-    
     message = None
+
     if request.method == "POST": 
+        # User new task
+        new_task = request.form["new_task"].strip()
 
-        # L'utilisateur a soumis le formulaire
-        nouvelle_tache = request.form["nouvelle_tache"].strip()
-
-        if nouvelle_tache == "":
+        # Warnings
+        if new_task == "":
             message = "A task cannot be empty"
-        # elif (
-        #     nouvelle_tache in taches["todo"] 
-        #     or nouvelle_tache in taches["in_progress"] 
-        #     or nouvelle_tache in taches["done"]
-        # ):
 
-        elif Task.query.filter_by(nom=nouvelle_tache).first():
+        elif Task.query.filter_by(name=new_task).first():
             message = "This task already exists"
         else:
-            # taches["todo"].append(nouvelle_tache)
-            # sauvegarder_taches(taches)
-            nouvelle = Task(nom=nouvelle_tache, statut="todo")
-            db.session.add(nouvelle)
+            new = Task(name=new_task, status="todo")
+            db.session.add(new)
             db.session.commit()
-
-    todo = Task.query.filter_by(statut="todo").all()
-    in_progress = Task.query.filter_by(statut="in_progress").all()
-    done = Task.query.filter_by(statut="done").all()
+    # Filled in Task table
+    todo = Task.query.filter_by(status="todo").all()
+    in_progress = Task.query.filter_by(status="in_progress").all()
+    done = Task.query.filter_by(status="done").all()
 
     return render_template("index.html", 
-                           #todo=taches["todo"], 
                            todo=todo,
-                           #in_progress=taches["in_progress"], 
                            in_progress = in_progress,
-                           #done=taches["done"],
                            done = done, 
-                           message=message)  # au lieu de renvoyer juste du texte
+                           message=message)  
 
-
-@app.route("/supprimer", methods=["POST"])
-def supprimer():
-    tache_supp = request.form["tache"]
-    statut_supp = request.form["statut"]
-    #if tache_supp in taches[statut_supp]:
-    tache = Task.query.filter_by(nom=tache_supp, statut=statut_supp).first()
-    if tache:
-        #taches[statut_supp].remove(tache_supp)
-        db.session.delete(tache)
+# Delete 
+@app.route("/delete", methods=["POST"])
+def delete():
+    task_to_del = request.form["task"]
+    status_to_del = request.form["status"]
+    task = Task.query.filter_by(name=task_to_del, status=status_to_del).first()
+    if task:
+        db.session.delete(task)
         db.session.commit()
-    #sauvegarder_taches(taches)
     return redirect("/")
 
-@app.route("/deplacer", methods=["POST"])
-def deplacer():
-    tache_dep = request.form["tache"]
-    statut_dep = request.form["statut"]
-    statut_dest= request.form["destination"]
-    #if tache_dep in taches[statut_dep]:
-    tache = Task.query.filter_by(nom=tache_dep, statut=statut_dep).first()
-    if tache:
-        tache.statut = statut_dest
+# Move
+@app.route("/move", methods=["POST"])
+def move():
+    task_to_move= request.form["task"]
+    status_to_move = request.form["status"]
+    status_dest= request.form["destination"]
+    task = Task.query.filter_by(name=task_to_move, status=status_to_move).first()
+    if task:
+        task.status = status_dest
         db.session.commit()
-        #taches[statut_dep].remove(tache_dep)
-        #taches[statut_dest].append(tache_dep)
-    #sauvegarder_taches(taches)
     return redirect("/")
 
-if __name__ == "__main__": # Ne fait ce qui est dedans que si on exécutepython main.py ce fichier directement
+if __name__ == "__main__": 
     with app.app_context():
         db.create_all()
     app.run(debug=True)

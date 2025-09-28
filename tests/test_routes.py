@@ -1,51 +1,52 @@
-def test_ajouter_tache(client):
-    # Envoi d'un POST sur la route "/" pour ajouter une tâche
-    response = client.post("/", data={"nouvelle_tache": "Tester pytest"})
+def test_add_task(client):
+    # Send a POST request to the "/" route to add a new task
+    response = client.post("/", data={"new_task": "Test pytest"})
     
-    # Vérifie que le serveur a répondu avec un code 200 (OK)
+    # Verify that the server responded with a 200 OK status
     assert response.status_code == 200
     
-    # Vérifie que la tâche ajoutée existe bien en base
+    # Check that the task was successfully added to the database
     from main import Task, db, app
     with app.app_context():
-        tache = Task.query.filter_by(nom="Tester pytest").first()
-        assert tache is not None
-        assert tache.statut == "todo"
+        task = Task.query.filter_by(name="Test pytest").first()
+        assert task is not None
+        assert task.status == "todo"
 
 
-def test_supprimer_tache(client):
+def test_delete_task(client):
     from main import Task, db, app
 
-    # Crée la tâche directement en base
+    # Create a task directly in the database
     with app.app_context():
-        tache = Task(nom="Tester pytest", statut="todo")
-        db.session.add(tache)
+        task = Task(name="Test pytest", status="todo")
+        db.session.add(task)
         db.session.commit()
 
-    # Envoie du POST pour supprimer la tâche
-    response = client.post("/supprimer", data={"tache": "Tester pytest", "statut": "todo"})
+    # Send a POST request to delete the task
+    response = client.post("/delete", data={"task": "Test pytest", "status": "todo"})
     assert response.status_code == 302  # redirect
 
-    # Vérifie que la tâche a été supprimée
+    # Verify that the task has been removed from the database
     with app.app_context():
-        tache = Task.query.filter_by(nom="Tester pytest").first()
-        assert tache is None
+        task = Task.query.filter_by(name="Test pytest").first()
+        assert task is None
 
-def test_deplacer_tache(client):
+def test_move_task(client):
     from main import Task, db, app
        
-    # Crée la tâche directement en base
+    # Create a task directly in the database
     with app.app_context():
-        tache = Task(nom="Tester pytest", statut="todo")
-        db.session.add(tache)
+        task = Task(name="Test pytest", status="todo")
+        db.session.add(task)
         db.session.commit()
+
+    # Send a POST request to move the task from "todo" to "in_progress"
+    response = client.post("/move", data={"task": "Test pytest", 
+                                          "status": "todo", 
+                                          "destination" : "in_progress"})
     
-    response = client.post("/deplacer", data={"tache": "Tester pytest", 
-                                              "statut": "todo", 
-                                              "destination" : "in_progress"})
-    
-    # Vérifie que la tâche a été déplacée
+    # Verify that the task's status has been updated
     with app.app_context():
-        tache = Task.query.filter_by(nom="Tester pytest", ).first()
-        assert tache is not None
-        assert tache.statut == "in_progress"
+        task = Task.query.filter_by(name="Test pytest", ).first()
+        assert task is not None
+        assert task.status == "in_progress"

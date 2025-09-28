@@ -1,5 +1,5 @@
-<!DOCTYPE html> <!-- Indique au navigateur que c'est un doc html -->
-<html lang="fr"> <!-- Démarre le document HTML, en précisant que c’est en français -->
+<!DOCTYPE html> 
+<html lang="en"> 
 <head>
     <meta charset="UTF-8">
     <title>Organiser</title>
@@ -11,15 +11,15 @@
             <ul>
                 {% for task in todo %}
                     <li>
-                        {{ task.nom }}
-                        <form action="/supprimer" method="post" style="display:inline;">
-                            <input type="hidden" name="tache" value="{{ task.nom }}">
-                            <input type="hidden" name="statut" value="todo">
+                        {{ task.name }}
+                        <form action="/delete" method="post" style="display:inline;">
+                            <input type="hidden" name="task" value="{{ task.name }}">
+                            <input type="hidden" name="status" value="todo">
                             <button type="submit">🗑️</button>
                         </form>
-                        <form action="/deplacer" method="post" style="display:inline;">
-                            <input type="hidden" name="tache" value="{{ task.nom }}">
-                            <input type="hidden" name="statut" value="todo">
+                        <form action="/move" method="post" style="display:inline;">
+                            <input type="hidden" name="task" value="{{ task.name }}">
+                            <input type="hidden" name="status" value="todo">
                             <input type="hidden" name="destination" value="in_progress">
                             <button type="submit">✅</button>
                         </form>
@@ -32,21 +32,21 @@
             <ul>
                 {% for task in in_progress %}
                     <li>
-                        {{ task.nom }}
-                        <form action="/supprimer" method="post" style="display:inline;">
-                            <input type="hidden" name="tache" value="{{ task.nom }}">
-                            <input type="hidden" name="statut" value="in_progress">
+                        {{ task.name }}
+                        <form action="/delete" method="post" style="display:inline;">
+                            <input type="hidden" name="task" value="{{ task.name }}">
+                            <input type="hidden" name="status" value="in_progress">
                             <button type="submit">🗑️</button>
                         </form>  
-                        <form action="/deplacer" method="post" style="display:inline;">
-                            <input type="hidden" name="tache" value="{{ task.nom }}">
-                            <input type="hidden" name="statut" value="in_progress">
+                        <form action="/move" method="post" style="display:inline;">
+                            <input type="hidden" name="task" value="{{ task.name }}">
+                            <input type="hidden" name="status" value="in_progress">
                             <input type="hidden" name="destination" value="done">
                             <button type="submit">✅</button>
                         </form>
-                        <form action="/deplacer" method="post" style="display:inline;">
-                            <input type="hidden" name="tache" value="{{ task.nom }}">
-                            <input type="hidden" name="statut" value="in_progress">
+                        <form action="/move" method="post" style="display:inline;">
+                            <input type="hidden" name="task" value="{{ task.name }}">
+                            <input type="hidden" name="status" value="in_progress">
                             <input type="hidden" name="destination" value="todo">
                             <button type="submit">↩️</button>
                         </form>                 
@@ -59,15 +59,15 @@
             <ul>
                 {% for task in done %}
                     <li>
-                        {{ task.nom }}
-                        <form action="/supprimer" method="post" style="display:inline;">
-                            <input type="hidden" name="tache" value="{{ task.nom }}">
-                            <input type="hidden" name="statut" value="done">
+                        {{ task.name }}
+                        <form action="/delete" method="post" style="display:inline;">
+                            <input type="hidden" name="task" value="{{ task.name }}">
+                            <input type="hidden" name="status" value="done">
                             <button type="submit">🗑️</button>
                         </form>
-                        <form action="/deplacer" method="post" style="display:inline;">
-                            <input type="hidden" name="tache" value="{{ task.nom }}">
-                            <input type="hidden" name="statut" value="done">
+                        <form action="/move" method="post" style="display:inline;">
+                            <input type="hidden" name="task" value="{{ task.name }}">
+                            <input type="hidden" name="status" value="done">
                             <input type="hidden" name="destination" value="in_progress">
                             <button type="submit">↩️</button>
                         </form>                         
@@ -83,8 +83,8 @@
 {% endif %}
 
 
-<form method="POST"> <!-- Pas besoin d'écrire action="/" car le formulaire sera envoyé vers la même URL que celle de la page actuelle -->
-  <input type="text" name="nouvelle_tache" placeholder="Nouvelle tâche">
+<form method="POST"> 
+  <input type="text" name="new_task" placeholder="New task">
   <button type="submit">Ajouter</button>
 </form>
 
